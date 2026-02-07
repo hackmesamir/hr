@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\LeaveController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest:admin'])->group(function () {
@@ -69,4 +70,9 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::put('profile', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::get('profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.profile.change-password');
     Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->name('admin.profile.update-password');
+    
+    // Attendance management routes
+    Route::get('attendance', [AttendanceController::class, 'index'])->name('admin.attendance.index');
+    Route::get('attendance/statistics', [AttendanceController::class, 'statistics'])->name('admin.attendance.statistics');
+    Route::get('attendance/{id}', [AttendanceController::class, 'show'])->name('admin.attendance.show');
 });

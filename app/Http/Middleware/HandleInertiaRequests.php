@@ -43,6 +43,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
+            'todayAttendance' => $request->user() ? \App\Models\Attendance::whereDate('attendance_date', now()->format('Y-m-d'))
+                ->where('user_id', $request->user()->id)
+                ->first() : null,
         ];
     }
 }

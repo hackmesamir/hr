@@ -8,7 +8,8 @@ import {
   Menu,
   X,
   Shield,
-  User
+  User,
+  Clock
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from '@inertiajs/react';
@@ -34,6 +35,7 @@ export default function Sidebar({ currentRoute = '/admin/dashboard' }: SidebarPr
     { href: '/admin/staff', label: 'Staff', icon: Users },
     { href: '/admin/clients', label: 'Clients', icon: Briefcase },
     { href: '/admin/leaves', label: 'Leaves', icon: Calendar, showBadge: true },
+    { href: '/admin/attendance', label: 'Attendance', icon: Clock },
     { href: '/admin/admin-users', label: 'Admin Users', icon: Shield },
   ];
 

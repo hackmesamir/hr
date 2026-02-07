@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class,
             ClientUserSeeder::class,
             LeaveSeeder::class,
+            AttendanceSeeder::class,
         ]);
     }
     

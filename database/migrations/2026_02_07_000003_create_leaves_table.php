@@ -16,11 +16,12 @@ class CreateLeavesTable extends Migration
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('leave_type', ['sick', 'casual', 'annual', 'maternity', 'paternity', 'unpaid', 'emergency'])->default('sick');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('days')->nullable();
-            $table->enum('type', ['vacation', 'sick', 'personal', 'unpaid'])->default('vacation');
             $table->text('reason')->nullable();
+            $table->string('attachment')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
             $table->foreignId('approver_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('approved_at')->nullable();
