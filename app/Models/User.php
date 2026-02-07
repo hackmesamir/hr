@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Leave;
@@ -16,7 +17,7 @@ use App\Models\Client;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,8 +26,18 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
+        'staff_id',
+        'type',
+        'father_name',
+        'mother_name',
+        'permanent_address',
+        'current_address',
+        'nid_number',
+        'mobile_number',
+        'parent_number',
+        'cv_upload',
         'password',
+        'status',
     ];
 
     /**

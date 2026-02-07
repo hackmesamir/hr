@@ -15,61 +15,60 @@ class ClientSeeder extends Seeder
         // Create test clients
         $testClients = [
             [
-                'name' => 'Acme Corporation',   
+                'parent_name' => 'Acme Holdings Inc.',
                 'client_name' => 'Acme Corporation',
-                'email' => 'contact@acme.com',  
-                'phone' => '+1-555-0100',
-                'address' => '123 Business St, New York, NY 10001',
+                'client_address' => '123 Business St, New York, NY 10001',
+                'responsible_person' => 'John Smith',
+                'contact_person' => 'Jane Doe',
+                'financial_year' => '2024-2025',
+                'audit_type' => 'statutory',
+                'status' => 'active',
             ],
             [
-                'name' => 'Global Tech Solutions',
-                'email' => 'info@globaltech.com',
-                'phone' => '+1-555-0101',
-                'address' => '456 Innovation Ave, San Francisco, CA 94102',
+                'parent_name' => 'Global Technologies Group',
+                'client_name' => 'Global Tech Solutions',
+                'client_address' => '456 Innovation Ave, San Francisco, CA 94102',
+                'responsible_person' => 'Michael Johnson',
+                'contact_person' => 'Sarah Wilson',
+                'financial_year' => '2024-2025',
+                'audit_type' => 'external',
+                'status' => 'active',
             ],
             [
-                'name' => 'Premier Marketing Group',
-                'email' => 'hello@premier.com',
-                'phone' => '+1-555-0102',
-                'address' => '789 Commerce Blvd, Chicago, IL 60601',
+                'parent_name' => 'Premier Marketing Holdings',
+                'client_name' => 'Premier Marketing Group',
+                'client_address' => '789 Marketing Blvd, Los Angeles, CA 90001',
+                'responsible_person' => 'Robert Brown',
+                'contact_person' => 'Emily Davis',
+                'financial_year' => '2023-2024',
+                'audit_type' => 'statutory',
+                'status' => 'active',
             ],
             [
-                'name' => 'Future Enterprises Ltd',
-                'email' => 'support@future.com',
-                'phone' => '+1-555-0103',
-                'address' => '321 Growth Lane, Austin, TX 78701',
+                'parent_name' => 'Financial Services Ltd',
+                'client_name' => 'Finance Plus Corp',
+                'client_address' => '321 Financial District, Chicago, IL 60601',
+                'responsible_person' => 'David Miller',
+                'contact_person' => 'Lisa Anderson',
+                'financial_year' => '2024-2025',
+                'audit_type' => 'external',
+                'status' => 'inactive',
             ],
             [
-                'name' => 'Innovation Hub Inc',
-                'email' => 'team@innovationhub.com',
-                'phone' => '+1-555-0104',
-                'address' => '654 Startup Rd, Seattle, WA 98101',
-            ],
-            [
-                'name' => 'Digital Dynamics',
-                'email' => 'contact@dynamicsdigital.com',
-                'phone' => '+1-555-0105',
-                'address' => '987 Tech Park, Boston, MA 02101',
-            ],
-            [
-                'name' => 'Strategic Partnerships Co',
-                'email' => 'partnerships@strategic.com',
-                'phone' => '+1-555-0106',
-                'address' => '135 Partnership Way, Denver, CO 80202',
-            ],
-            [
-                'name' => 'NextGen Consulting',
-                'email' => 'consult@nextgen.com',
-                'phone' => '+1-555-0107',
-                'address' => '246 Future Blvd, Atlanta, GA 30303',
+                'parent_name' => 'Healthcare Systems Inc',
+                'client_name' => 'MedCare Solutions',
+                'client_address' => '555 Medical Park Dr, Boston, MA 02101',
+                'responsible_person' => 'James Taylor',
+                'contact_person' => 'Patricia Moore',
+                'financial_year' => '2024-2025',
+                'audit_type' => 'statutory',
+                'status' => 'active',
             ],
         ];
 
-        foreach ($testClients as $clientData) {
-            Client::firstOrCreate(
-                ['email' => $clientData['email']],
-                $clientData
-            );
+        foreach ($testClients as $client) {
+            Client::create($client);
         }
     }
 }
+

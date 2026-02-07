@@ -56,6 +56,44 @@ class AuthController extends Controller
      */
     public function dashboard()
     {
-        return Inertia::render('admin/Dashboard');
+        // Get real statistics
+        $totalUsers = \App\Models\User::whereNull('deleted_at')->count();
+        $totalClients = \App\Models\Client::whereNull('deleted_at')->count();
+        $pendingLeaves = \App\Models\Leave::where('status', 'pending')->count();
+        $todayAttendance = \App\Models\Attendance::whereDate('created_at', today())->count();
+        $totalStaff = \App\Models\User::where('type', 'employee')->whereNull('deleted_at')->count();
+        
+        // Get recent activities
+        $recentUsers = \App\Models\User::whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->select('id', 'name', 'staff_id', 'created_at')
+            ->get();
+            
+        $recentClients = \App\Models\Client::whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->select('id', 'client_name', 'parent_name', 'created_at')
+            ->get();
+            
+        $pendingLeaveRequests = \App\Models\Leave::with('user')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return Inertia::render('admin/Dashboard', [
+            'stats' => [
+                'totalUsers' => $totalUsers,
+                'totalClients' => $totalClients,
+                'pendingLeaves' => $pendingLeaves,
+                'todayAttendance' => $todayAttendance,
+                'totalStaff' => $totalStaff,
+                'attendancePercentage' => $totalStaff > 0 ? round(($todayAttendance / $totalStaff) * 100, 1) : 0,
+            ],
+            'recentUsers' => $recentUsers,
+            'recentClients' => $recentClients,
+            'pendingLeaveRequests' => $pendingLeaveRequests,
+        ]);
     }
 }
