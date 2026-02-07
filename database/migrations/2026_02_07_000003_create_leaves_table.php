@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLeavesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('leaves', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->unsignedDecimal('days', 5, 2)->nullable();
+            $table->enum('type', ['vacation', 'sick', 'personal', 'unpaid'])->default('vacation');
+            $table->text('reason')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
+            $table->foreignId('approver_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('approved_at')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamps();
+            $table->index(['user_id', 'status']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('leaves');
+    }
+}
