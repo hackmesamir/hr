@@ -6,9 +6,7 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\AttendanceController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return redirect('/login');
 })->name('home');
 
 Route::get('dashboard', function () {
@@ -23,3 +21,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';

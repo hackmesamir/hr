@@ -6,51 +6,50 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+
 type Props = {
     status?: string;
 };
 
-export default function Login({
-    status,
-}: Props) {
+export default function AdminLogin({ status }: Props) {
     const { data, setData, post, processing, errors } = useForm({
-        staff_id: '',
+        email: '',
         password: '',
         remember: false,
     });
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/login');
+        post('/admin/login');
     }
 
     return (
         <AuthLayout
-            title="Staff Login"
+            title="Admin Login"
             description="Enter your credentials to continue"
         >
-            <Head title="Staff Login" />
+            <Head title="Admin Login" />
             
             <Card className="w-full shadow-xl border-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-xl overflow-hidden border-t border-white/20">
                 <CardContent className="p-6 md:p-8">
                     <form onSubmit={submit} className="flex flex-col gap-5">
                         <div className="grid gap-5">
                             <div className="grid gap-2">
-                                <Label htmlFor="staff_id">Staff ID</Label>
+                                <Label htmlFor="email">Email address</Label>
                                 <Input
-                                    id="staff_id"
-                                    type="text"
-                                    name="staff_id"
-                                    value={data.staff_id}
-                                    onChange={e => setData('staff_id', e.target.value)}
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    value={data.email}
+                                    onChange={e => setData('email', e.target.value)}
                                     required
                                     autoFocus
                                     tabIndex={1}
-                                    autoComplete="username"
-                                    placeholder="Enter your Staff ID"
+                                    autoComplete="email"
+                                    placeholder="admin@example.com"
                                 />
-                                {errors.staff_id && <InputError message={errors.staff_id} />}
+                                {errors.email && <InputError message={errors.email} />}
                             </div>
 
                             <div className="grid gap-2">
@@ -84,10 +83,9 @@ export default function Login({
 
                             <Button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
+                                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 rounded-md transition-all duration-300 shadow-md hover:shadow-lg"
                                 tabIndex={4}
                                 disabled={processing}
-                                data-test="login-button"
                             >
                                 {processing && <Spinner className="mr-2" />}
                                 Log in
@@ -95,8 +93,8 @@ export default function Login({
                         </div>
 
                         <div className="text-center text-sm mt-4">
-                            <Link href="/admin/login" className="text-blue-600 hover:text-purple-600 font-medium transition-colors duration-300">
-                                Admin Login
+                            <Link href="/login" className="text-purple-600 hover:text-blue-600 font-medium transition-colors duration-300">
+                                User Login
                             </Link>
                         </div>
                     </form>
@@ -104,7 +102,7 @@ export default function Login({
             </Card>
 
             {status && (
-                <div className="mt-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 text-center text-sm font-medium text-green-600">
                     {status}
                 </div>
             )}
