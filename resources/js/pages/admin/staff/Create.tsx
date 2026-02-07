@@ -10,7 +10,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import Sidebar from '@/components/admin/Sidebar';
 import InputError from '@/components/input-error';
 
-export default function CreateStaff() {
+export default function CreateStaff({ pendingLeavesCount = 0 }: { pendingLeavesCount?: number }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     staff_id: '',
     name: '',

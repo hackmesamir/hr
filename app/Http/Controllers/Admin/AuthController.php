@@ -94,6 +94,7 @@ class AuthController extends Controller
             'recentUsers' => $recentUsers,
             'recentClients' => $recentClients,
             'pendingLeaveRequests' => $pendingLeaveRequests,
+            'pendingLeavesCount' => $pendingLeaves,
         ]);
     }
 }

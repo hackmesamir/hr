@@ -28,9 +28,10 @@ interface Staff {
 
 interface Props {
   staff: Staff;
+  pendingLeavesCount?: number;
 }
 
-export default function EditStaff({ staff }: Props) {
+export default function EditStaff({ staff, pendingLeavesCount = 0 }: Props) {
   const { data, setData, put, processing, errors } = useForm({
     staff_id: staff.staff_id || '',
     name: staff.name || '',

@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\LeaveController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest:admin'])->group(function () {
@@ -38,4 +41,32 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::get('clients/{id}/assign-users', [ClientController::class, 'assignUsers'])->name('admin.clients.assignUsers');
     Route::post('clients/{id}/store-assignments', [ClientController::class, 'storeAssignments'])->name('admin.clients.storeAssignments');
     Route::delete('clients/{clientId}/users/{userId}', [ClientController::class, 'removeAssignment'])->name('admin.clients.removeAssignment');
+    
+    // Leave management routes
+    Route::get('leaves', [LeaveController::class, 'index'])->name('admin.leaves.index');
+    Route::get('leaves/create', [LeaveController::class, 'create'])->name('admin.leaves.create');
+    Route::post('leaves', [LeaveController::class, 'store'])->name('admin.leaves.store');
+    Route::get('leaves/{id}', [LeaveController::class, 'show'])->name('admin.leaves.show');
+    Route::get('leaves/{id}/edit', [LeaveController::class, 'edit'])->name('admin.leaves.edit');
+    Route::put('leaves/{id}', [LeaveController::class, 'update'])->name('admin.leaves.update');
+    Route::delete('leaves/{id}', [LeaveController::class, 'destroy'])->name('admin.leaves.destroy');
+    Route::post('leaves/{id}/approve', [LeaveController::class, 'approve'])->name('admin.leaves.approve');
+    Route::post('leaves/{id}/reject', [LeaveController::class, 'reject'])->name('admin.leaves.reject');
+    Route::post('leaves/{id}/cancel', [LeaveController::class, 'cancel'])->name('admin.leaves.cancel');
+    
+    // Admin user management routes
+    Route::get('admin-users', [AdminUserController::class, 'index'])->name('admin.admin-users.index');
+    Route::get('admin-users/create', [AdminUserController::class, 'create'])->name('admin.admin-users.create');
+    Route::post('admin-users', [AdminUserController::class, 'store'])->name('admin.admin-users.store');
+    Route::get('admin-users/{id}', [AdminUserController::class, 'show'])->name('admin.admin-users.show');
+    Route::get('admin-users/{id}/edit', [AdminUserController::class, 'edit'])->name('admin.admin-users.edit');
+    Route::put('admin-users/{id}', [AdminUserController::class, 'update'])->name('admin.admin-users.update');
+    Route::delete('admin-users/{id}', [AdminUserController::class, 'destroy'])->name('admin.admin-users.destroy');
+    
+    // Profile management routes
+    Route::get('profile', [ProfileController::class, 'show'])->name('admin.profile.show');
+    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::get('profile/change-password', [ProfileController::class, 'changePassword'])->name('admin.profile.change-password');
+    Route::put('profile/change-password', [ProfileController::class, 'updatePassword'])->name('admin.profile.update-password');
 });

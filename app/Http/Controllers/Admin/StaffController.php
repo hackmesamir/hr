@@ -29,7 +29,8 @@ class StaffController extends Controller
             
         return Inertia::render('admin/staff/Index', [
             'staff' => $staff,
-            'deletedStaff' => $deletedStaff
+            'deletedStaff' => $deletedStaff,
+            'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
         ]);
     }
 
@@ -40,7 +41,9 @@ class StaffController extends Controller
      */
     public function create()
     {
-        return Inertia::render('admin/staff/Create');
+        return Inertia::render('admin/staff/Create', [
+            'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
+        ]);
     }
 
     /**
@@ -128,7 +131,8 @@ class StaffController extends Controller
         $staff = User::findOrFail($id);
         
         return Inertia::render('admin/staff/Edit', [
-            'staff' => $staff
+            'staff' => $staff,
+            'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
         ]);
     }
 

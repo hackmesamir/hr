@@ -62,9 +62,10 @@ interface Staff {
 interface Props {
   staff: Staff[];
   deletedStaff?: Staff[];
+  pendingLeavesCount?: number;
 }
 
-export default function StaffIndex({ staff, deletedStaff = [] }: Props) {
+export default function StaffIndex({ staff, deletedStaff = [], pendingLeavesCount = 0 }: Props) {
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState<number | null>(null);
