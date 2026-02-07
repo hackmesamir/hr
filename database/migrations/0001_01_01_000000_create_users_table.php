@@ -17,23 +17,23 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('staff_id')->unique();
-          $table->enum('type', ['student', 'employee'])->default('employee');
-$table->string('father_name');
-            $table->string('mother_name');
-            $table->text('permanent_address');
-            $table->text('current_address');
-            $table->string('nid_number')->unique();
-            $table->string('mobile_number');
+            $table->enum('type', ['student', 'employee'])->default('employee');
+            $table->string('father_name')->nullable();
+            $table->string('mother_name')->nullable();
+            $table->text('permanent_address')->nullable();
+            $table->text('current_address')->nullable();
+            $table->string('nid_number')->unique()->nullable();
+            $table->string('mobile_number')->nullable();
             $table->string('parent_number')->nullable();
             $table->string('cv_upload')->nullable();
 
             $table->string('password');
 
-                        $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
             $table->rememberToken();
             $table->timestamps();
-                        $table->softDeletes();
+            $table->softDeletes();
 
         });
 

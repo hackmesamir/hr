@@ -16,16 +16,20 @@ class CreateClientsTable extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-          $table->string('parent_name');
-            $table->string('client_name');
-            $table->text('client_address');
-            $table->string('responsible_person');
-            $table->string('contact_person');
-            $table->string('financial_year');
+            $table->string('name');
+            $table->string('parent_name')->nullable();
+            $table->string('client_name')->nullable();
+            $table->text('address')->nullable();
+            $table->text('client_address')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('responsible_person')->nullable();
+            $table->string('contact_person')->nullable();
+            $table->string('financial_year')->nullable();
             $table->enum('audit_type', ['statutory', 'external'])->default('statutory');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
-                $table->softDeletes();
+            $table->softDeletes();
         });
     }
 

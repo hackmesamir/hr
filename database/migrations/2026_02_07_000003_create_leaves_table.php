@@ -18,7 +18,7 @@ class CreateLeavesTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
-            $table->unsignedDecimal('days', 5, 2)->nullable();
+            $table->integer('days')->nullable();
             $table->enum('type', ['vacation', 'sick', 'personal', 'unpaid'])->default('vacation');
             $table->text('reason')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');

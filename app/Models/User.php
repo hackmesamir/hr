@@ -8,8 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Leave;
 use App\Models\Attendance;
+use App\Models\Client;
 
 class User extends Authenticatable
 {
@@ -61,5 +63,10 @@ class User extends Authenticatable
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function clients(): BelongsToMany
+    {
+        return $this->belongsToMany(Client::class, 'client_user');
     }
 }
