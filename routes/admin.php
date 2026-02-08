@@ -28,6 +28,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->group(function () {
     Route::delete('staff/{id}', [StaffController::class, 'destroy'])->name('admin.staff.destroy');
     Route::post('staff/{id}/restore', [StaffController::class, 'restore'])->name('admin.staff.restore');
     Route::delete('staff/{id}/force-delete', [StaffController::class, 'forceDelete'])->name('admin.staff.forceDelete');
+    Route::get('staff/{id}/leave-report', [StaffController::class, 'leaveReport'])->name('admin.staff.leaveReport');
+    Route::get('staff/{id}/attendance', [StaffController::class, 'attendance'])->name('admin.staff.attendance');
     
     // Client management routes
     Route::get('clients', [ClientController::class, 'index'])->name('admin.clients.index');

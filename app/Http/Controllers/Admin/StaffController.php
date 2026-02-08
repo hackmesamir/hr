@@ -249,4 +249,160 @@ class StaffController extends Controller
         return redirect()->route('admin.staff.index')
             ->with('success', 'Staff member deactivated successfully');
     }
+
+    /**
+     * Display leave report for a specific staff member.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Inertia\Response
+     */
+    public function leaveReport(Request $request, $id)
+    {
+        $staff = User::select('id', 'staff_id', 'name', 'type', 'mobile_number')
+            ->findOrFail($id);
+
+        $query = \App\Models\Leave::where('user_id', $id);
+
+        // Apply date filters if provided
+        if ($request->has('start_date') && $request->start_date) {
+            $query->where('start_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date) {
+            $query->where('end_date', '<=', $request->end_date);
+        }
+
+        $leaves = $query->orderBy('created_at', 'desc')->get()->map(function ($leave) {
+            return [
+                'id' => $leave->id,
+                'type' => $leave->type,
+                'start_date' => $leave->start_date,
+                'end_date' => $leave->end_date,
+                'days' => $leave->days,
+                'reason' => $leave->reason,
+                'status' => $leave->status,
+                'approved_at' => $leave->approved_at,
+                'created_at' => $leave->created_at,
+            ];
+        });
+
+        // Calculate statistics
+        $stats = [
+            'total' => $leaves->count(),
+            'approved' => $leaves->where('status', 'approved')->count(),
+            'pending' => $leaves->where('status', 'pending')->count(),
+            'rejected' => $leaves->where('status', 'rejected')->count(),
+            'total_days' => $leaves->where('status', 'approved')->sum('days'),
+        ];
+
+        return Inertia::render('admin/staff/LeaveReport', [
+            'staff' => $staff,
+            'leaves' => $leaves,
+            'stats' => $stats,
+            'startDate' => $request->start_date ?? '',
+            'endDate' => $request->end_date ?? '',
+            'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
+        ]);
+    }
+
+    /**
+     * Display attendance records for a specific staff member.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Inertia\Response
+     */
+    public function attendance(Request $request, $id)
+    {
+        $staff = User::select('id', 'staff_id', 'name', 'type', 'mobile_number')
+            ->findOrFail($id);
+
+        $query = \App\Models\Attendance::where('user_id', $id);
+
+        // Apply date filters if provided
+        if ($request->has('start_date') && $request->start_date) {
+            $query->where('attendance_date', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date) {
+            $query->where('attendance_date', '<=', $request->end_date);
+        }
+
+        $attendances = $query->orderBy('attendance_date', 'desc')->get()->map(function ($attendance) {
+            // Calculate work hours
+            $totalHours = '-';
+            if ($attendance->check_in_time && $attendance->check_out_time) {
+                $checkIn = \Carbon\Carbon::parse($attendance->check_in_time);
+                $checkOut = \Carbon\Carbon::parse($attendance->check_out_time);
+                $diff = $checkIn->diff($checkOut);
+                $totalHours = sprintf('%dh %dm', $diff->h, $diff->i);
+            }
+
+            return [
+                'id' => $attendance->id,
+                'attendance_date' => $attendance->attendance_date,
+                'check_in_time' => $attendance->check_in_time,
+                'check_out_time' => $attendance->check_out_time,
+                'check_in_address' => $attendance->check_in_address,
+                'check_out_address' => $attendance->check_out_address,
+                'total_hours' => $totalHours,
+            ];
+        });
+
+        // Calculate statistics
+        $totalDays = $attendances->count();
+        $presentDays = $attendances->count();
+        
+        // Count late days (after 9:00 AM)
+        $lateDays = $attendances->filter(function ($attendance) {
+            $checkIn = \Carbon\Carbon::parse($attendance['check_in_time']);
+            $standardTime = \Carbon\Carbon::parse('09:00:00');
+            return $checkIn->gt($standardTime);
+        })->count();
+
+        // Calculate total hours worked
+        $totalMinutes = 0;
+        foreach ($attendances as $attendance) {
+            if ($attendance['check_in_time'] && $attendance['check_out_time']) {
+                $checkIn = \Carbon\Carbon::parse($attendance['check_in_time']);
+                $checkOut = \Carbon\Carbon::parse($attendance['check_out_time']);
+                $totalMinutes += $checkIn->diffInMinutes($checkOut);
+            }
+        }
+        
+        $totalHoursWorked = floor($totalMinutes / 60);
+        $totalMinutesRemaining = $totalMinutes % 60;
+        $totalHoursFormatted = sprintf('%dh %dm', $totalHoursWorked, $totalMinutesRemaining);
+        
+        $averageHours = $presentDays > 0 ? round($totalMinutes / $presentDays / 60, 1) : 0;
+        $averageHoursFormatted = sprintf('%.1fh', $averageHours);
+
+        // Calculate date range for absent days
+        $startDate = $request->start_date ?? $attendances->last()['attendance_date'] ?? now()->subMonth()->format('Y-m-d');
+        $endDate = $request->end_date ?? now()->format('Y-m-d');
+        
+        $start = \Carbon\Carbon::parse($startDate);
+        $end = \Carbon\Carbon::parse($endDate);
+        $totalPossibleDays = $start->diffInDays($end) + 1;
+        $absentDays = max(0, $totalPossibleDays - $presentDays);
+
+        $stats = [
+            'total_days' => $totalPossibleDays,
+            'present_days' => $presentDays,
+            'absent_days' => $absentDays,
+            'late_days' => $lateDays,
+            'total_hours' => $totalHoursFormatted,
+            'average_hours' => $averageHoursFormatted,
+        ];
+
+        return Inertia::render('admin/staff/Attendance', [
+            'staff' => $staff,
+            'attendances' => $attendances,
+            'stats' => $stats,
+            'startDate' => $request->start_date ?? '',
+            'endDate' => $request->end_date ?? '',
+            'pendingLeavesCount' => \App\Models\Leave::where('status', 'pending')->count(),
+        ]);
+    }
 }

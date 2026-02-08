@@ -36,7 +36,9 @@ import {
   Eye,
   RotateCcw,
   Archive,
-  Trash2
+  Trash2,
+  FileText,
+  Calendar
 } from 'lucide-react';
 import Sidebar from '@/components/admin/Sidebar';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog';
@@ -72,15 +74,20 @@ export default function StaffIndex({ staff, deletedStaff = [], pendingLeavesCoun
   const [permanentDeleteDialogOpen, setPermanentDeleteDialogOpen] = useState(false);
   const [staffToPermanentDelete, setStaffToPermanentDelete] = useState<number | null>(null);
   const [showArchive, setShowArchive] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
   
-  // Filter staff members based on search term
-  const filteredStaff = staff ? staff.filter(staffMember => 
-    staffMember.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staffMember.staff_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staffMember.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (staffMember.mobile_number && staffMember.mobile_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (staffMember.nid_number && staffMember.nid_number.toLowerCase().includes(searchTerm.toLowerCase()))
-  ) : [];
+  // Filter staff members based on search term and status
+  const filteredStaff = staff ? staff.filter(staffMember => {
+    const matchesSearch = staffMember.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      staffMember.staff_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      staffMember.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (staffMember.mobile_number && staffMember.mobile_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (staffMember.nid_number && staffMember.nid_number.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesStatus = showInactive ? staffMember.status === 'inactive' : staffMember.status === 'active';
+    
+    return matchesSearch && matchesStatus;
+  }) : [];
   
   // Filter deleted staff members based on search term
   const filteredDeletedStaff = deletedStaff ? deletedStaff.filter(staffMember => 
@@ -139,12 +146,22 @@ export default function StaffIndex({ staff, deletedStaff = [], pendingLeavesCoun
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             {!showArchive && (
-              <Button asChild className="w-full sm:w-auto">
-                <Link href="/admin/staff/create" className="gap-1 flex items-center justify-center">
-                  <UserPlus className="h-4 w-4" />
-                  Add Staff
-                </Link>
-              </Button>
+              <>
+                <Button asChild className="w-full sm:w-auto">
+                  <Link href="/admin/staff/create" className="gap-1 flex items-center justify-center">
+                    <UserPlus className="h-4 w-4" />
+                    Add Staff
+                  </Link>
+                </Button>
+                <Button 
+                  variant={showInactive ? "default" : "outline"} 
+                  onClick={() => setShowInactive(!showInactive)} 
+                  className="w-full sm:w-auto"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  {showInactive ? 'Active' : 'Inactive'}
+                </Button>
+              </>
             )}
             <Button variant="outline" onClick={toggleArchive} className="w-full sm:w-auto">
               <Archive className="h-4 w-4 mr-2" />
@@ -157,11 +174,13 @@ export default function StaffIndex({ staff, deletedStaff = [], pendingLeavesCoun
           <CardHeader className="pb-3">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <CardTitle>
-                {showArchive ? 'Deactivated Staff Members' : 'Active Staff Members'}
+                {showArchive ? 'Deactivated Staff Members' : showInactive ? 'Inactive Staff Members' : 'Active Staff Members'}
               </CardTitle>
               <CardDescription>
                 {showArchive 
                   ? 'Staff members that have been deactivated and can be restored'
+                  : showInactive
+                  ? 'Staff members with inactive status'
                   : 'Currently active staff members'
                 }
               </CardDescription>
@@ -286,6 +305,18 @@ export default function StaffIndex({ staff, deletedStaff = [], pendingLeavesCoun
                                     <Edit className="mr-2 h-4 w-4" /> Edit
                                   </Link>
                                 </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                  <Link href={`/admin/staff/${staffMember.id}/leave-report`}>
+                                    <FileText className="mr-2 h-4 w-4" /> Leave Report
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <Link href={`/admin/staff/${staffMember.id}/attendance`}>
+                                    <Calendar className="mr-2 h-4 w-4" /> Attendance
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => handleDeleteClick(staffMember.id)}>
                                   <Trash className="mr-2 h-4 w-4" /> Delete
                                 </DropdownMenuItem>
